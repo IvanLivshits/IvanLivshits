@@ -18,7 +18,7 @@
 - :hourglass_flowing_sand:  Exploring AWS & Interesting APIs;
 - :rocket: Always ready to collaborate for Dev Experiments;
 - :dart: Life Hack: "Explore :fire: and Explode :bomb: with knowledge";
-- :zap: Fun fact: In my third year at the institute, I developed a program to launch a rocket to the Moon;
+- :zap: Fun fact: In my third year of study, I developed a program to launch a rocket to the Moon;
 
 <h2 align="left">:heart: Let's get connected:</h2>
 
