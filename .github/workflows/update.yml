@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [generate.py, portrait.py, ascii.txt]
+    paths: [generate.py, portrait.py, ascii.txt, avatar.sha256]
 
 permissions:
   contents: write
