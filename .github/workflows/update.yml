@@ -1,0 +1,45 @@
+name: Update profile SVG
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [generate.py, portrait.py, ascii.txt]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Has the avatar changed?
+        id: avatar
+        run: |
+          login=$(python -c "from generate import LOGIN; print(LOGIN)")
+          new=$(curl -fsSL "https://github.com/$login.png?size=1000" | sha256sum | cut -d' ' -f1)
+          [ "$new" = "$(cat avatar.sha256 2>/dev/null)" ] || echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Redraw the ASCII portrait
+        if: steps.avatar.outputs.changed == 'true'
+        run: |
+          sudo apt-get install -y -q fonts-dejavu-core
+          pip install -q pillow "rembg[cpu]" "opencv-python-headless<4.11"
+          python portrait.py
+      - name: Generate SVG
+        env:
+          # optional personal token (repo, read:user) to count private repos too
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python generate.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ascii.txt avatar.sha256 dark_mode.svg stats.json
+          git diff --cached --quiet || (git commit -m "Update profile card" && git push)
